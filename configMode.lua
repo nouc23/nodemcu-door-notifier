@@ -25,7 +25,10 @@ srv:listen(80,function(conn)
 		requestLines = lines(payload)
 		requestParamsString = (requestLines[table.getn(requestLines)])
     	print("POST request", requestParamsString)
+    	requestParams = query_string(requestParamsString)
 
+		
+		
 
     end
 
@@ -44,4 +47,36 @@ function lines(str)
   local function helper(line) table.insert(t, line) return "" end
   helper((str:gsub("(.-)\r?\n", helper)))
   return t
+end
+
+function url_decode (s)
+    return s:gsub ('+', ' '):gsub ('%%(%x%x)', function (hex) return string.char (tonumber (hex, 16)) end)
+end 
+
+function query_string (url)
+    local res = {}
+
+    for name, value in  string.gmatch(url,'([^&=]+)=([^&=]+)') do
+        print(name)
+        print(value)
+        value = url_decode (value)
+        print(value)
+        local key = name:match '%[([^&=]*)%]$'
+        if key then
+            name, key = url_decode (name:match '^[^[]+'), url_decode (key)
+            if type (res [name]) ~= 'table' then
+                res [name] = {}
+            end
+            if key == '' then
+                key = #res [name] + 1
+            else
+                key = tonumber (key) or key
+            end
+            res [name] [key] = value
+        else
+            name = url_decode (name)
+            res [name] = value
+        end
+    end
+    return res
 end
