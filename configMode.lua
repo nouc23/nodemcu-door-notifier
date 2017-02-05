@@ -18,7 +18,16 @@ wifi.setmode(wifi.SOFTAP)
 srv=net.createServer(net.TCP)
 srv:listen(80,function(conn)
   conn:on("receive",function(conn,payload)
-    print(payload)
+
+    --check is POST request
+    if string.sub(payload,1,string.len("POST")) == "POST" then
+    	-- get request
+		requestLines = lines(payload)
+		requestParamsString = (requestLines[table.getn(requestLines)])
+    	print("POST request", requestParamsString)
+
+
+    end
 
 	if file.open("config.html") then
     	conn:send(file.read())
@@ -28,3 +37,11 @@ srv:listen(80,function(conn)
   end)
   conn:on("sent",function(conn) conn:close() end)
 end)
+
+
+function lines(str)
+  local t = {}
+  local function helper(line) table.insert(t, line) return "" end
+  helper((str:gsub("(.-)\r?\n", helper)))
+  return t
+end
