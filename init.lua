@@ -4,8 +4,9 @@ configMode = true; -- @todo determinate on gpio
 
 if configMode then
 	print('Starting config mode...')
-	dofile('configMode.lua')
+	dofile('setup-ap.lua')
+	dofile('config-server.lua')
 else
     print('Starting work mode...')
-    dofile('workMode.lua')
+    dofile('work-mode.lua')
 end

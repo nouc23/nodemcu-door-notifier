@@ -1,42 +1,34 @@
-<html>
-	<head>
-		<title>Door Notifier configuration</title>
-	</head>
-	<body>
-		<h1>Door Notifier configuration</h1>
-		<form method="POST">
-			<h2>Wifi configuration</h2>
-
-			<label>SSID</label>
-			<input type="text" name="wifi_ssid" />
-			<br />
-
-			<label>Password</label>
-			<input type="text" name="wifi_pass" />
-
-			<h2>SMS configuration</h2>
-			
-			<label>Send delay in ms</label>
-			<input type="text" name="sms_delay" />
-			<br />
-
-			<label>Send repeat</label>
-			<input type="text" name="sms_repeat" />
-			<br />
-
-			<label>Send repeat delay</label>
-			<input type="text" name="sms_repeat_delay" />
-			<br />
-
-			<label>Sms text</label>
-			<input type="text" name="sms_text" />
-			<br />
-
-			<label>Msisdn's</label>
-			<input type="text" name="text_msisdn" />
-			<br />
-
-			<input type="submit" value="Save" />
-		</form>
-	</body>
-</html>
+<h1>Door Notifier configuration</h1>
+<form method="POST">
+    <fieldset>
+		<legend>Wifi configuration</legend>
+		<label>SSID</label>
+		<input type="text" name="wifi_ssid" value="[[wifi_ssid]]" />
+		<br />
+		<label>Password</label>
+		<input type="password" name="wifi_pass" value="[[wifi_pass]]" />
+    </fieldset>
+    <fieldset>
+        <legend>Notification configuration</legend>
+		<label>Send delay</label>
+		<input type="number" name="notify_delay" value="[[notify_delay]]" />
+		<br />
+		<label>Send repeat</label>
+		<input type="number" name="notify_repeat_count" value="[[notify_repeat_count]]" />
+		<br />
+		<label>Send repeat delay</label>
+		<input type="number" name="notify_repeat_delay" value="[[notify_repeat_delay]]" />
+        <br />
+        <label>Notify text</label>
+        <input type="text" name="notify_text" value="[[notify_text]]" />
+        <fieldset>
+            <legend>Sms</legend>
+            <label>Msisdn's</label>
+            <input type="text" name="notify_sms_msisdns" value="[[notify_sms_msisdns]]" />
+            <br />
+            <label>JustSend API key</label>
+            <input type="text" name="notify_sms_apikey" value="[[notify_sms_apikey]]" />
+        </fieldset>
+    </fieldset>
+	<input type="submit" value="Save" />
+</form>
