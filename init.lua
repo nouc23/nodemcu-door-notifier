@@ -1,8 +1,8 @@
 print('Starting...')
 
-configMode = true; -- @todo determinate on gpio
+config_mode = true; -- @todo determinate on gpio
 
-if configMode then
+if config_mode then
 	print('Starting config mode...')
 	dofile('setup-ap.lua')
 	dofile('config-server.lua')
