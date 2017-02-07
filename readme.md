@@ -1,3 +1,3 @@
 # Door notifier
 
-lua script for node-mcu whitch send http request to sms service.
+lua script for node-mcu which sends http request to sms service.
