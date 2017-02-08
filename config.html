@@ -1,33 +1,41 @@
-<form method="POST">
-    <fieldset>
-		<legend>Wifi conf</legend>
-		<label>SSID</label>
-		<input type="text" name="wifi_ssid" value="[[wifi_ssid]]" />
-		<br />
-		<label>Password</label>
-		<input type="password" name="wifi_pass" value="[[wifi_pass]]" />
-    </fieldset>
-    <fieldset>
-        <legend>Notifi conf</legend>
-		<label>Send delay</label>
-		<input type="number" name="notify_delay" value="[[notify_delay]]" />
-		<br />
-		<label>Send repeat</label>
-		<input type="number" name="notify_repeat_count" value="[[notify_repeat_count]]" />
-		<br />
-		<label>Send repeat delay</label>
-		<input type="number" name="notify_repeat_delay" value="[[notify_repeat_delay]]" />
-        <br />
-        <label>Notify text</label>
-        <input type="text" name="notify_text" value="[[notify_text]]" />
-        <fieldset>
-            <legend>Sms</legend>
-            <label>Msisdn's</label>
-            <input type="text" name="notify_sms_msisdns" value="[[notify_sms_msisdns]]" />
-            <br />
-            <label>API key</label>
-            <input type="text" name="notify_sms_apikey" value="[[notify_sms_apikey]]" />
-        </fieldset>
-    </fieldset>
-	<input type="submit" value="Save" />
-</form>
+<html>
+    <head>
+        <title>Door notifier</title>
+    </head>
+    <body>
+        <h1>Door notifier</h1>
+        <form method="POST">
+            <button type="submit">Save</button>
+            <fieldset>
+        		<legend>Wifi conf</legend>
+        		<label>SSID</label>
+        		<input type="text" name="wifi_ssid" value="[[wifi_ssid]]" />
+        		<br />
+        		<label>Password</label>
+        		<input type="password" name="wifi_pass" value="[[wifi_pass]]" />
+            </fieldset>
+            <fieldset>
+                <legend>Notifi conf</legend>
+        		<label>Send delay</label>
+        		<input type="number" name="notify_delay" value="[[notify_delay]]" />
+        		<br />
+        		<label>Send repeat</label>
+        		<input type="number" name="notify_repeat_count" value="[[notify_repeat_count]]" />
+        		<br />
+        		<label>Send repeat delay</label>
+        		<input type="number" name="notify_repeat_delay" value="[[notify_repeat_delay]]" />
+                <br />
+                <label>Notify text</label>
+                <input type="text" name="notify_text" value="[[notify_text]]" />
+                <fieldset>
+                    <legend>Sms</legend>
+                    <label>Msisdn's</label>
+                    <input type="text" name="notify_sms_msisdns" value="[[notify_sms_msisdns]]" />
+                    <br />
+                    <label>API key</label>
+                    <input type="text" name="notify_sms_apikey" value="[[notify_sms_apikey]]" />
+                </fieldset>
+            </fieldset>
+        </form>
+    </body>
+</html>
