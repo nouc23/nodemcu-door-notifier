@@ -3,17 +3,15 @@ require 'config'
 TMR_ID_WIFI = 1
 TMR_ID_NOTIFY_START = 2
 TMR_ID_NOTIFY_LOOP = 3
+TMR_ID_LED_BLINK = 4
+
+LED_PIN = 4 --GPIO2
+
+gpio.mode(LED_PIN, gpio.OUTPUT)
 
 -- load config
 print('Starting notification job')
 config = load_config()
-
--- @todo remove
-config['wifi_ssid'] = 'UPC6188466';
-config['wifi_pass'] = 'BPBUWEQT';
-config['notify_delay'] = 5;
-config['notify_repeat_count'] = 10;
-config['notify_repeat_delay'] = 10;
 
 function connect_to_wifi () 
     print('Try to connect to', config['wifi_ssid'])
@@ -22,8 +20,20 @@ function connect_to_wifi ()
     return
 end
 
+function blink_led(time)
+    gpio.write(LED_PIN, gpio.LOW)
+    
+    tmr.alarm(TMR_ID_LED_BLINK, time, 1, function()
+        gpio.write(LED_PIN, gpio.HIGH)
+        tmr.stop(TMR_ID_LED_BLINK)
+    end)
+    return 
+end
+
 function send_notification()
     print('Sending notification', config['notify_text'])
+
+    blink_led(1500)
 
     -- https://justsend.pl:443/api/rest/bulk/send/API_KEY
 --{
@@ -78,9 +88,10 @@ if config['wifi_ssid'] ~= nil and config ['wifi_pass'] ~= nil then
     connect_to_wifi()
 
     -- wait for wifi connection
-    tmr.alarm(TMR_ID_WIFI, 1000, 1, function()
+    tmr.alarm(TMR_ID_WIFI, 300, 1, function()
         if wifi.sta.getip()==nil then
             print(".")
+            blink_led(50)
         else
             print("Got IP address " .. wifi.sta.getip())
             start_notification_timer (

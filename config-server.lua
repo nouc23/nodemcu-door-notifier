@@ -47,6 +47,8 @@ srv:listen(80, function(conn)
             
                 -- removing missing configurations
                 line = line:gsub('%[%[(.-)%]%]', '')
+
+                print('Send', line)
               
                 -- send html line
                 conn:send(line)
@@ -64,10 +66,12 @@ srv:listen(80, function(conn)
             print('Collect garbage')
 
                 
-            conn:close() 
-    
-            print('Connection close')
         end
+
+        
+        conn:close() 
+    
+        print('Connection close')
     end)
     conn:on("sent", function(conn) 
     end)
