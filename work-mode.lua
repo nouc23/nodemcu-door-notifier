@@ -1,5 +1,7 @@
 require 'config'
 
+collectgarbage()
+
 TMR_ID_WIFI = 1
 TMR_ID_NOTIFY_START = 2
 TMR_ID_NOTIFY_LOOP = 3
@@ -12,6 +14,10 @@ gpio.mode(LED_PIN, gpio.OUTPUT)
 -- load config
 print('Starting notification job')
 config = load_config()
+
+-- @todo remove
+config['notify_delay'] = 1
+
 
 function connect_to_wifi () 
     print('Try to connect to', config['wifi_ssid'])
@@ -30,27 +36,61 @@ function blink_led(time)
     return 
 end
 
+function split(str, sep)
+    local sep, fields = sep or ",", {}
+    local pattern = str.format("([^%s]+)", sep)
+    str:gsub(pattern, function(c) fields[#fields+1] = c end)
+    return fields
+end
+
 function send_notification()
     print('Sending notification', config['notify_text'])
 
     blink_led(1500)
 
-    -- https://justsend.pl:443/api/rest/bulk/send/API_KEY
---{
---  "groupId": 0,
---  "from": "door-notifier",
---  "sendDate": "2017-01-01T17:00:00+02:00",  -- date from past
---  "bulkVariant": "ECO",
---  "to": [
---    "{{MSISDNS}}",
---    "{{MSISDNS}}",
---    "{{MSISDNS}}"
---  ],
---  "message": "{{MESSAGE_TEXT}}",
---  "name": "door-notifier"
---}
+    msisdns = {}
+    
+    for msisdn in string.gmatch(config['notify_sms_msisdns'], "[^,]+") do
+        table.insert(msisdns, msisdn)
+    end
+
+    if table.getn(msisdns) > 0 then
+        url = '/api/rest/bulk/send/' .. string.gsub(config['notify_sms_apikey'] , "%s+", "")
+        json = 
+               '{'
+                .. '"groupId": 0,'
+                .. '"from": "door-notifier",'
+                .. '"sendDate": "2017-01-01T17:00:00+02:00",'  -- date from past
+                .. '"bulkVariant": "ECO",'
+                .. '"to": ["' .. table.concat(msisdns, '","') .. '"],'
+                .. '"message": "' .. config['notify_text'] .. '",'
+                .. '"name": "door-notifier"'
+            .. '}'
+
+
+        frame = "POST " .. url .. " HTTP/1.1\r\n"
+        .. "Accept: application/json\r\n"
+        .. "Connection: keep-alive\r\n"
+        .. "Content-Length: " .. string.len(json) .. "\r\n"
+        .. "Content-Type: application/json\r\n"
+        .. "Host: justsend.pl\r\n"
+        .. "Origin:https://justsend.pl\r\n"
+        .. "\r\n" 
+        .. json
+        
+        print(frame)
+    
+        conn=net.createConnection(net.TCP, false) 
+        conn:on("receive", function(conn, payload)
+            print("receive", payload)
+        end)
+        conn:connect(443, "justsend.pl")
+        conn:send(frame)
+
+    end
 
 end
+
 
 function start_notification_loop ()
     print('Start notification loop')
@@ -88,9 +128,8 @@ if config['wifi_ssid'] ~= nil and config ['wifi_pass'] ~= nil then
     connect_to_wifi()
 
     -- wait for wifi connection
-    tmr.alarm(TMR_ID_WIFI, 300, 1, function()
+    tmr.alarm(TMR_ID_WIFI, 400, 1, function()
         if wifi.sta.getip()==nil then
-            print(".")
             blink_led(50)
         else
             print("Got IP address " .. wifi.sta.getip())
@@ -106,13 +145,3 @@ if config['wifi_ssid'] ~= nil and config ['wifi_pass'] ~= nil then
 else
     print('No wifi credentials')
 end
-
--- wait for `notify_delay` seccond
-
--- begin repeat `notify_repeat_count` times
-
-    -- wait `notify_repeat_delay` in loop
-
---for key, value in pairs(config) do
---    print (key, value)
---end
